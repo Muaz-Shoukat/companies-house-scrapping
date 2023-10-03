@@ -2,7 +2,7 @@ interface Company {
   company_name: string;
   company_number: string;
   company_status: string;
-  company_type: string;
+  type: string;
   kind: string;
   links: { self: string };
   date_of_cessation: string;
@@ -16,17 +16,20 @@ interface Company {
   sic_codes: string[];
 }
 
+
 interface HeaderProps {
-  filteredCompanyData: Company[]; // Assuming Company is the correct type
+  filteredCompanyData: Company[]; 
+  nobList: object
 }
 
 import { CSVLink } from "react-csv";
 
-const Header = ({ filteredCompanyData }: HeaderProps) => {
+const Header = ({ filteredCompanyData,nobList }: HeaderProps) => {
   const generateCSVData = () => {
     const csvData = filteredCompanyData.map((company) => ({
       company_name: company.company_name,
-      "Nature of Bussiness": company.company_type,
+      company_link: `${import.meta.env.VITE_REQUEST_URL}/${company.links.self}`,
+      "Nature of Bussiness": company.sic_codes.map(code=>nobList[code as keyof object]),
       "Incorporation Date": company.date_of_creation,
     }));
     return csvData;

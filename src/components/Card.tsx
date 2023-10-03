@@ -5,7 +5,7 @@ interface CompanyDataProps {
     company_name: string;
     company_number: string;
     company_status: string;
-    company_type: string;
+    type: string;
     kind: string;
     links: { self: string };
     date_of_cessation: string;
@@ -18,6 +18,7 @@ interface CompanyDataProps {
     };
     sic_codes: string[];
   };
+  nobList: object;
 }
 
 interface FilingItem {
@@ -29,10 +30,10 @@ interface FilingItem {
   };
 }
 
-const Card = ({ data }: CompanyDataProps) => {
+const Card = ({ data, nobList }: CompanyDataProps) => {
   const [filingData, setFilingData] = useState<FilingItem[]>([]);
-  const [isLoading,setIsLoading] = useState<boolean>(false);
-  const [isError,setIsError] = useState<string|null>(null)
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isError, setIsError] = useState<string | null>(null);
   const fetchData = async () => {
     setIsLoading(true);
     try {
@@ -47,7 +48,7 @@ const Card = ({ data }: CompanyDataProps) => {
       const responseData = await response.json();
       setFilingData(responseData.data);
     } catch (error) {
-      setIsError(`something went wrong`)
+      setIsError(`something went wrong`);
       console.error("Error:", error);
     }
     setIsLoading(false);
@@ -66,9 +67,7 @@ const Card = ({ data }: CompanyDataProps) => {
         </div>
         <div className="px-4 py-5">
           <a
-            href={`${import.meta.env.VITE_REQUEST_URL}/${
-              data.links.self
-            }`}
+            href={`${import.meta.env.VITE_REQUEST_URL}/${data.links.self}`}
             target="_blank"
             rel="noreferrer"
             className="text-base mb-2 text-[#019267] font-semibold underline"
@@ -78,9 +77,13 @@ const Card = ({ data }: CompanyDataProps) => {
           <div className="text-sm text-gray-500 mb-1">
             {`${data.registered_office_address.address_line_1}, ${data.registered_office_address.locality}, ${data.registered_office_address.country}`}
           </div>
-          <div className="flex justify-start items-center text-sm">
+          <div className="flex flex-col justify-center items-start text-sm">
             <label className="mr-2">Nature of Bussiness: </label>
-            <div className=" text-gray-500">{data.company_type}</div>
+            {data.sic_codes.map((code) => (
+              <div className=" text-gray-500">
+                {nobList[code as keyof object]}
+              </div>
+            ))}
           </div>
           <div className="flex justify-start items-center text-sm">
             <label className="mr-2">Incorporation Date: </label>
@@ -109,7 +112,9 @@ const Card = ({ data }: CompanyDataProps) => {
               Fetch Filing History
             </button>
           )}
-          {isLoading && <div className="w-full text-center text-sm">Loading...</div>}
+          {isLoading && (
+            <div className="w-full text-center text-sm">Loading...</div>
+          )}
           {filingData.length > 0 && (
             <div className="grid grid-cols-3 text-sm text-[#019267] font-semibold mt-1">
               <div className="col-span-1">Type</div>

@@ -8,7 +8,7 @@ interface Company {
   company_name: string;
   company_number: string;
   company_status: string;
-  company_type: string;
+  type: string;
   kind: string;
   links: { self: string };
   date_of_cessation: string;
@@ -25,6 +25,7 @@ interface Company {
 function App() {
   const [companyData, setCompanyData] = useState<Company[]>([]);
   const [filteredCompanyData, setFilteredCompanyData] = useState<Company[]>([]);
+  const [nobList,setNOBList] = useState<object>({})
   const [page, setPage] = useState<number>(1);
   const [searchTerm, setSearchTerm] = useState<string>("");
   const companiesPerPage = 10;
@@ -36,9 +37,17 @@ function App() {
     setCompanyData(data);
     setFilteredCompanyData(data); // Initialize filtered data with all companies
   };
+  const nobListHandler = async () => {
+    const response = await fetch("./nob.json");
+    const data:object = await response.json();
+    setNOBList(data);
+    
+  };
+
 
   useEffect(() => {
     fetchDataHandler();
+    nobListHandler();
   }, []);
 
   const handleChangePage = (
@@ -70,7 +79,7 @@ function App() {
 
   return (
     <div className="w-full">
-      <Header filteredCompanyData={filteredCompanyData} />
+      <Header filteredCompanyData={filteredCompanyData} nobList={nobList} />
       <div className="max-w-[1200px] px-4 py-4 mx-auto mb-24 w-full">
         <div className="mb-6">
           <input
@@ -89,7 +98,7 @@ function App() {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {companiesToShow.map((company) => (
-            <Card key={company.company_number} data={company} />
+            <Card key={company.company_number} data={company} nobList={nobList} />
           ))}
         </div>
         <Stack spacing={2} justifyContent="center" sx={{ marginTop: 2 }}>
