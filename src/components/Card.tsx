@@ -70,6 +70,7 @@ const Card = ({ data }: CompanyDataProps) => {
               data.links.self
             }`}
             target="_blank"
+            rel="noreferrer"
             className="text-base mb-2 text-[#019267] font-semibold underline"
           >
             {`${data.company_name} (#${data.company_number})`}
@@ -126,6 +127,7 @@ const Card = ({ data }: CompanyDataProps) => {
                     filing.links.self
                   }/document?format=pdf&download=0`}
                   target="_blank"
+                  rel="noreferrer"
                   className="col-span-1 text-[#019267] underline "
                 >
                   View PDF
