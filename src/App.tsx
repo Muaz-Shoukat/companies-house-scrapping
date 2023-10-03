@@ -30,7 +30,7 @@ function App() {
   const companiesPerPage = 10;
 
   const fetchDataHandler = async () => {
-    const response = await fetch("../res.json");
+    const response = await fetch("./res.json");
 
     const data: Company[] = await response.json();
     setCompanyData(data);
