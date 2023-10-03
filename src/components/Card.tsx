@@ -46,8 +46,8 @@ const Card = ({ data }: CompanyDataProps) => {
 
       const responseData = await response.json();
       setFilingData(responseData.data);
-    } catch (error:any) {
-      setIsError(`${error.message}`)
+    } catch (error) {
+      setIsError(`something went wrong`)
       console.error("Error:", error);
     }
     setIsLoading(false);
