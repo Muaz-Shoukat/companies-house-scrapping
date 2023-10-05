@@ -105,34 +105,12 @@ function App() {
           ? company.overview.sic_codes?.some((sic) => sic.includes(sicCode))
           : true) &&
         (month
-          ? company.overview.date_of_creation.slice(5, 7) === month
+          ? company.filing.some((file) => file.date.slice(5, 7) === month)
           : true) &&
         (year
-          ? company.overview.date_of_creation.slice(0, 4).includes(year)
+          ? company.filing.some((file) => file.date.slice(0, 4).includes(year))
           : true)
     );
-    // const matchesSIC = company.overview.sic_codes?.some((sic) =>
-    //   sic.includes(term)
-    // );
-
-    // // Check which input triggered the change event
-    // if (inputType === "month") {
-    //   const matchesMonth = selectedMonth
-    //     ? company.overview.date_of_creation.slice(5,7).includes(event.target.value)
-    //     : true;
-
-    //   return matchesSIC && matchesMonth;
-    // }
-
-    // if (inputType === "year") {
-    //   const matchesYear = selectedYear
-    //     ? company.overview.date_of_creation.slice(0,4).includes(event.target.value)
-    //     : true;
-
-    //   return matchesSIC && matchesYear;
-    // }
-
-    // return matchesSIC;
 
     setFilteredCompanyData(filteredCompanies);
     setPage(1); // Reset pagination when applying a search
