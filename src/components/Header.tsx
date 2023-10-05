@@ -1,36 +1,53 @@
 interface Company {
-  company_name: string;
-  company_number: string;
-  company_status: string;
-  type: string;
-  kind: string;
-  links: { self: string };
-  date_of_cessation: string;
-  date_of_creation: string;
-  registered_office_address: {
-    address_line_1: string;
-    locality: string;
-    postal_code: string;
-    country: string;
-  };
-  sic_codes: string[];
+  overview: Overview;
+  filing: Filing[];
 }
 
+interface Overview {
+  links: Links;
+  date_of_creation: string;
+  sic_codes?: string[];
+  company_name: string;
+}
+
+export interface Links {
+  self: string;
+}
+
+export interface Filing {
+  date: string;
+  links: Links2;
+}
+
+export interface Links2 {
+  self: string;
+}
 
 interface HeaderProps {
-  filteredCompanyData: Company[]; 
-  nobList: object
+  filteredCompanyData: Company[];
+  nobList: object;
 }
 
 import { CSVLink } from "react-csv";
 
-const Header = ({ filteredCompanyData,nobList }: HeaderProps) => {
+const Header = ({ filteredCompanyData, nobList }: HeaderProps) => {
   const generateCSVData = () => {
     const csvData = filteredCompanyData.map((company) => ({
-      company_name: company.company_name,
-      company_link: `${import.meta.env.VITE_REQUEST_URL}/${company.links.self}`,
-      "Nature of Bussiness": company.sic_codes.map(code=>nobList[code as keyof object]),
-      "Incorporation Date": company.date_of_creation,
+      company_name: company.overview.company_name,
+      company_link: `${import.meta.env.VITE_REQUEST_URL}/${
+        company.overview.links.self
+      }`,
+      "Nature of Bussiness": company.overview.sic_codes?.map(
+        (code) => nobList[code as keyof object]
+      ),
+      "Incorporation Date": company.overview.date_of_creation,
+      "SH02 Dates": company.filing.map((file) => file.date),
+      "SH02 Links": company.filing.map(
+        (file) =>
+          `${import.meta.env.VITE_REQUEST_URL}${
+            file.links.self
+          }/document?format=pdf&download=0`
+      ),
     }));
     return csvData;
   };
