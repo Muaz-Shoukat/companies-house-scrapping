@@ -144,10 +144,10 @@ function App() {
               handleSearch(e, "sicCode");
             }}
           />
-          <div className="py-3 mr-4 px-6 rounded-3xl w-full sm:w-1/6 shadow-md block md:inline bg-white">
+          <div className="py-3 mr-4 px-6 rounded-3xl w-full sm:w-1/6 shadow-md block md:inline bg-white my-[6px] md:my-0">
             <select
               value={selectedMonth}
-              className="outline-none"
+              className="outline-none w-full sm:w-1/6"
               onChange={(e) => {
                 setSelectedMonth(e.target.value);
                 // handleSearch(e, "month");
