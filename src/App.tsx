@@ -3,6 +3,7 @@ import Card from "./components/Card";
 import Header from "./components/Header";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
+import Switch from "@mui/material/Switch";
 
 interface Company {
   overview: Overview;
@@ -55,8 +56,15 @@ function App() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [selectedYear, setSelectedYear] = useState<string>("");
+  const [useSicCode, setUseSicCode] = useState<boolean>(false);
 
   const companiesPerPage = 10;
+
+  // Step 3: Create a function to handle the switch button toggle
+  const handleSicCodeToggle = () => {
+    setUseSicCode((prevUseSicCode) => !prevUseSicCode);
+    clearSearch();
+  };
 
   const fetchDataHandler = async () => {
     const response = await fetch("./res.json");
@@ -101,7 +109,11 @@ function App() {
     }
     const filteredCompanies = companyData.filter(
       (company) =>
-        (sicCode
+        (useSicCode
+          ? sicCode
+            ? company.overview.sic_codes?.some((sic) => !sic.includes(sicCode))
+            : true
+          : sicCode
           ? company.overview.sic_codes?.some((sic) => sic.includes(sicCode))
           : true) &&
         (month
@@ -133,21 +145,32 @@ function App() {
       <Header filteredCompanyData={filteredCompanyData} nobList={nobList} />
       <div className="max-w-[1200px] px-4 py-4 mx-auto mb-24 w-full">
         <div className="mb-6">
-          <input
-            type="number"
-            className="py-3 mr-4 px-6 rounded-3xl w-full sm:w-1/3 shadow-md block md:inline"
-            placeholder="Search by SIC codes"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              // handleSearch(e, "sicCode");
-              handleSearch(e, "sicCode");
-            }}
-          />
-          <div className="py-3 mr-4 px-6 rounded-3xl w-full sm:w-1/6 shadow-md block md:inline bg-white my-[6px] md:my-0">
+          <div className=" my-2 w-full md:w-1/6 block md:inline">
+            <input
+              type="number"
+              className="py-3 mr-4 px-6 rounded-3xl w-full inline md:w-1/5 shadow-md "
+              placeholder={
+                useSicCode ? "Search without SIC code" : "Search by SIC codes"
+              }
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                // handleSearch(e, "sicCode");
+                handleSearch(e, "sicCode");
+              }}
+            />
+            <div className="inline items-center">
+              <Switch
+                color="success"
+                checked={useSicCode}
+                onChange={handleSicCodeToggle}
+              />
+            </div>
+          </div>
+          <div className="py-3 mr-4 px-6 rounded-3xl w-full md:w-1/6 shadow-md block md:inline bg-white my-[6px] md:my-0">
             <select
               value={selectedMonth}
-              className="outline-none w-full sm:w-1/6"
+              className="outline-none w-full md:w-1/6"
               onChange={(e) => {
                 setSelectedMonth(e.target.value);
                 // handleSearch(e, "month");
@@ -172,7 +195,7 @@ function App() {
           </div>
           <input
             type="number"
-            className="py-3 mr-4 px-6 rounded-3xl w-full sm:w-1/6 shadow-md block md:inline"
+            className="py-3 mr-4 px-6 rounded-3xl w-full md:w-1/6 shadow-md block md:inline"
             placeholder="Enter Year"
             value={selectedYear}
             onChange={(e) => {
@@ -189,10 +212,15 @@ function App() {
             Clear Search
           </button>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {companiesToShow.map((company, index) => (
-            <Card key={index} data={company} nobList={nobList} />
-          ))}
+        <div className="w-full text-right pr-2 italic font-semibold my-1 text-lg">
+          ({filteredCompanyData.length})
+        </div>
+        <div className="border-y-2 border-[#019267] py-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {companiesToShow.map((company, index) => (
+              <Card key={index} data={company} nobList={nobList} />
+            ))}
+          </div>
         </div>
         <Stack spacing={2} justifyContent="center" sx={{ marginTop: 2 }}>
           <Pagination
